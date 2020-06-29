@@ -1,0 +1,53 @@
+{
+  "name": "generic-backend",
+  "version": "0.0.4",
+  "description": "",
+  "main": "index.js",
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/callmephil/GenericExpressBackend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/callmephil/GenericExpressBackend/issues"
+  },
+  "homepage": "https://github.com/callmephil/GenericExpressBackend.git#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node ./src/index.js",
+    "build:clean": "rimraf ./build",
+    "build:build": "babel src --out-dir ./build --source-maps",
+    "build": "npm run build:clean && npm run build:build",
+    "production": "node ./build/index.js"
+  },
+  "keywords": [],
+  "author": "Callmephil",
+  "license": "GPL 3.0",
+  "dependencies": {
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/node": "^7.6.3",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/register": "^7.6.2",
+    "better-sqlite3": "^7.1.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "dot-env": "0.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "helmet": "^3.21.2",
+    "morgan": "^1.9.1",
+    "regenerator-runtime": "^0.13.3",
+    "rimraf": "^3.0.0",
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
