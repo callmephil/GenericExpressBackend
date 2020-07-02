@@ -1,6 +1,6 @@
 import { app, io } from "./app";
 import Connection from "./Database/Connection";
-import controllerApp from "./Routes/manager";
+import controllerApp from "./Routes/controller";
 import { models } from "./Routes/Models/index";
 
 const onlineClients = new Set();
@@ -16,10 +16,6 @@ function onNewWebsocketConnection(socket) {
 
 const start = async () => {
   const DatabaseControllers = await Connection();
-
-  // app.get("/", (req, res, next) => {
-  //   res.send("hello from the test server");
-  // });
 
   let index = 0;
   for (const dbController in DatabaseControllers) {

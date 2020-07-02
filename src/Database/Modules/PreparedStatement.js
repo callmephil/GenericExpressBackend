@@ -66,7 +66,6 @@ const executeToDatabase = stmt => {
 
     const SELECT = id => {
       try {
-        console.log(id);
         return id ? stmt.get(id) : stmt.get();
       } catch (e) {
         return handleCatch(e);

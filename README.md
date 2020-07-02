@@ -19,10 +19,11 @@ This project intend to build a generic backend ready to use for small apps and m
 - [x] Dynamic Routes + Filters
 - [x] Dynamic Statement & Transactions
 - [x] Socket Communication (For Live App updates across multiple clients)
+- [x] Dynamic Middlewares (Modify params/body before it reach database transactions)
+- [x] Cleanup & Bug fixes
+- [x] Added Postman.
 
 # Roadmap 
-- [ ] Dynamic Routes with models
-- [ ] Dynamic Middlewares (Modify params/body before it reach database transactions)
 - [ ] Passport/JWT & RBAC System
 - [ ] Communication Module/Interceptors 
 - [ ] Strict Mode filtering (Only allow certain params/body to be passed)
@@ -32,4 +33,5 @@ This project intend to build a generic backend ready to use for small apps and m
 - [ ] Implement Caching
 - [ ] Implement Broker?
 - [ ] Migrate to newer version of babel
+- [ ] Migrations
 - [ ] Cleanup on V1.0.0
