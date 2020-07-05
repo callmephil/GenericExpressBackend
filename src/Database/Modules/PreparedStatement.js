@@ -1,34 +1,27 @@
 import { io } from "../../app";
-// import { onlineClients } from '../../index';
+import { models } from "../../Models/index";
 
-const queryList = [
-  // Users
-  {
-    USER_INS: `INSERT INTO users (first_name, last_name, email) VALUES ($first_name, $last_name, $email)`,
-    USER_UPD: `UPDATE users SET first_name = $first_name, last_name = $last_name, email = $email WHERE user_id = @id`,
-    USER_DEL: `DELETE FROM users WHERE user_id = ?`,
-    USER_SEL_ID: `SELECT * FROM users WHERE user_id = ?`,
-    USER_SEL_ALL: `SELECT * FROM users`,
-    USER_DEL_ALL: `DELETE FROM users`
-  },
-  // Unicorns
-  {
-    UNICORN_INS: `INSERT INTO unicorns (name, age, color) VALUES ($name, $age, $color)`,
-    UNICORN_UPD: `UPDATE unicorns SET name = $name, age = $age, color = $color WHERE unicorn_id = @id`,
-    UNICORN_DEL: `DELETE FROM unicorns WHERE unicorn_id = ?`,
-    UNICORN_SEL_ID: `SELECT * FROM unicorns WHERE unicorn_id = ?`,
-    UNICORN_SEL_ALL: `SELECT * FROM unicorns`,
-    UNICORN_DEL_ALL: `DELETE FROM unicorns`
-  }
-];
+const getQueriesFromModels = (models = []) => {
+  return models.map(({ transactions }) => {
+    const _obj = {};
+    transactions.forEach(({ query }) => {
+      const [key, value] = Object.entries(query)[0];
+      _obj[key] = value;
+    });
+    return _obj;
+  });
+};
 
-const prepareStmt = db => {
+const prepareStmt = (db) => {
   try {
-    let stmt = [];
+    const stmt = [];
+    const queryList = getQueriesFromModels(models);
 
-    queryList.forEach(element => {
+    queryList.forEach((element) => {
       for (const key in element) {
-        if (element.hasOwnProperty(key)) stmt[key] = db.prepare(element[key]);
+        if (element.hasOwnProperty(key)) {
+          stmt[key] = db.prepare(element[key]);
+        }
       }
     });
 
@@ -38,19 +31,31 @@ const prepareStmt = db => {
   }
 };
 
-const executeTransaction = (db, sqlArray) => {
-  const statements = sqlArray.map(sql => db.prepare(sql));
-  return db.transaction((data = {}) => {
-    let result;
-    for (const stmt of statements) {
-      // if (stmt.reader) result = stmt.get(data);
-      stmt.run(data);
+
+const executeTransactions = (db) => {
+  return db.transaction((stmt, type, props) => {
+    const promises = [];
+    for (const prop of props) {
+      promises.push(executeToDatabase(stmt)[type](prop));
     }
-    return result;
+    return Promise.all(promises);
+  })
+}
+
+const executeMultipleStatement = (db) => {
+  return db.transaction((stmt, props) => {
+    const type = "";
+    const promises = [];
+    if (Array.isArray(stmt)) {
+      for (const statement of stmt) {
+        promises.push(executeToDatabase(statement)[type](props))
+      }
+    }
+    return Promise.all(promises);
   });
 };
 
-const executeToDatabase = stmt => {
+const executeToDatabase = (stmt) => {
   try {
     const handleCatch = (err) => {
       console.error(`[ERROR] PreparedStatement/Execute: ${err.message}`);
@@ -60,11 +65,11 @@ const executeToDatabase = stmt => {
       return null;
       // return {
       //   success: false,
-      //   result: err.message 
+      //   result: err.message
       // }
-    }
+    };
 
-    const SELECT = id => {
+    const SELECT = (id) => {
       try {
         return id ? stmt.get(id) : stmt.get();
       } catch (e) {
@@ -72,7 +77,7 @@ const executeToDatabase = stmt => {
       }
     };
 
-    const SELECT_ALL = id => {
+    const SELECT_ALL = (id) => {
       try {
         return id ? stmt.all(id) : stmt.all();
       } catch (e) {
@@ -88,10 +93,10 @@ const executeToDatabase = stmt => {
       }
     };
 
-    const INSERT = props => {
+    const INSERT = (props) => {
       try {
         const result = stmt.run({
-          ...props
+          ...props,
         });
 
         return { id: result.lastInsertRowid, ...props };
@@ -104,7 +109,7 @@ const executeToDatabase = stmt => {
       try {
         props.id = id;
         const result = stmt.run({
-          ...props
+          ...props,
         });
 
         return result.changes === 1 ? { id, ...props } : null;
@@ -113,7 +118,7 @@ const executeToDatabase = stmt => {
       }
     };
 
-    const DELETE = id => {
+    const DELETE = (id) => {
       try {
         const result = stmt.run(id);
         return result.changes === 1 ? { id } : null;
@@ -122,7 +127,7 @@ const executeToDatabase = stmt => {
       }
     };
 
-    const DELETE_PROPS = props => {
+    const DELETE_PROPS = (props) => {
       try {
         const result = stmt.run({ ...props });
         return result.changes === 1 ? { ...props } : null;
@@ -139,10 +144,10 @@ const executeToDatabase = stmt => {
       }
     };
 
-    const INSERT_ALL = props => {
+    const INSERT_ALL = (props) => {
       try {
         const result = stmt.run({
-          ...props
+          ...props,
         });
         return result;
       } catch (e) {
@@ -159,7 +164,7 @@ const executeToDatabase = stmt => {
       DELETE,
       DELETE_PROPS,
       DELETE_ALL,
-      INSERT_ALL
+      INSERT_ALL,
     };
 
     return QueryCenter;

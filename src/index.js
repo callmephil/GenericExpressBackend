@@ -1,7 +1,7 @@
 import { app, io } from "./app";
+import { models } from "./Models/index";
 import Connection from "./Database/Connection";
 import controllerApp from "./Routes/controller";
-import { models } from "./Routes/Models/index";
 
 const onlineClients = new Set();
 function onNewWebsocketConnection(socket) {
@@ -17,10 +17,8 @@ function onNewWebsocketConnection(socket) {
 const start = async () => {
   const DatabaseControllers = await Connection();
 
-  let index = 0;
-  for (const dbController in DatabaseControllers) {
-    app.use('/api', await controllerApp(DatabaseControllers[dbController], models[index]));
-    index++;
+  for (const model of models) {
+    app.use('/api', await controllerApp(DatabaseControllers.uniqueController, model.routes))
   }
 
   app.use((err, req, res, next) => {
