@@ -3,18 +3,16 @@ import Express from "express";
 import { _objectWithoutProperties } from "../utils/_es7.fn";
 const app = Express();
 
-const controllerCall = controller => {
+const controllerCall = (controller) => {
   return async (method, props, res, next) => {
     try {
       const result = await controller[method](props);
-      if (result === null)
-        res.status(500);
+      if (result === null) res.status(500);
 
-      if (result)
-        handleSocketEmitter(res, result);
+      if (result) handleSocketEmitter(res, result);
 
       res.json({
-        result
+        result,
       });
     } catch (e) {
       next(e);
@@ -39,18 +37,16 @@ export default async (controller, models = []) => {
   const transactionCall = controllerCall(controller);
 
   for await (const model of models) {
-    const {
-      func,
-      type,
-      route,
-      exclude_body,
-      exclude_params,
-      middlewares,
-    } = model;
+    const { func, type, route, exclude_body, exclude_params, middlewares } = model;
     app[type](route, [...middlewares], async (req, res, next) => {
-      const body = _objectWithoutProperties(req.body, exclude_body);
-      const params = _objectWithoutProperties(req.params, exclude_params);
-      transactionCall(func, {...params, ...body }, res, next);
+      // TODO: REVIEW - Hack Fix  BULK INSERT ?
+      if (Array.isArray(req.body)) {
+        transactionCall(func, req.body, res, next);
+      } else {
+        const body = _objectWithoutProperties(req.body, exclude_body);
+        const params = _objectWithoutProperties(req.params, exclude_params);
+        transactionCall(func, { ...params, ...body }, res, next);
+      }
     });
   }
 

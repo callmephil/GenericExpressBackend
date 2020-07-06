@@ -1,60 +1,92 @@
 import { resetUsers } from "../Middlewares/reset.middlewares";
 
 export const users_model = {
+  // TODO: Find a way to re-use existing function for multiple statement.
   transactions: [
     {
       func: "getUser",
-      type: "SELECT",
-      query: {
-        USER_SEL_ID: `SELECT * FROM users WHERE user_id = ?`,
-      },
-      pk: "user_id",
-      props: [],
+      statements: [
+        {
+          type: "SELECT",
+          stmtKey: "USER_SEL_ID",
+          query: `SELECT * FROM users WHERE user_id = ?`,
+          pk: "user_id",
+          props: [],
+        },
+      ],
     },
     {
       func: "getAllUsers",
-      type: "SELECT_ALL",
-      query: {
-        USER_SEL_ALL: `SELECT * FROM users`,
-      },
-      pk: "",
-      props: [],
+      statements: [
+        {
+          type: "SELECT_ALL",
+          stmtKey: "USER_SEL_ALL",
+          query: `SELECT * FROM users`,
+          pk: "",
+          props: [],
+        },
+      ],
     },
     {
       func: "createUser",
-      type: "INSERT",
-      query: {
-        USER_INS: `INSERT INTO users (first_name, last_name, email) VALUES ($first_name, $last_name, $email)`,
-      },
-      pk: "",
-      props: ["first_name", "last_name", "email"],
+      statements: [
+        {
+          type: "INSERT",
+          stmtKey: "USER_INS",
+          query: `INSERT INTO users (first_name, last_name, email) VALUES ($first_name, $last_name, $email)`,
+          pk: "",
+          props: ["first_name", "last_name", "email"],
+        },
+      ],
     },
     {
       func: "updateUser",
-      type: "UPDATE",
-      query: {
-        USER_UPD: `UPDATE users SET first_name = $first_name, last_name = $last_name, email = $email WHERE user_id = @id`,
-      },
-      pk: "user_id",
-      props: ["first_name", "last_name", "email"],
+      statements: [
+        {
+          type: "UPDATE",
+          stmtKey: "USER_UPD",
+          query: `UPDATE users SET first_name = $first_name, last_name = $last_name, email = $email WHERE user_id = @id`,
+          pk: "user_id",
+          props: ["first_name", "last_name", "email"],
+        },
+      ],
     },
     {
       func: "deleteUser",
-      type: "DELETE",
-      query: {
-        USER_DEL: `DELETE FROM users WHERE user_id = ?`,
-      },
-      pk: "user_id",
-      props: [],
+      statements: [
+        {
+          type: "DELETE",
+          stmtKey: "USER_DEL",
+          query: `DELETE FROM users WHERE user_id = ?`,
+          pk: "user_id",
+          props: [],
+        },
+      ],
     },
     {
       func: "resetUser",
-      type: "DELETE",
-      query: {
-        USER_DEL_ALL: `DELETE FROM users`
-      },
-      pk: "",
-      props: [],
+      statements: [
+        {
+          type: "DELETE",
+          stmtKey: "USER_DEL_ALL",
+          query: `DELETE FROM users`,
+          pk: "",
+          props: [],
+        },
+      ],
+    },
+    {
+      // TODO: Duplicate
+      func: "insertDefaultUsers",
+      statements: [
+        {
+          type: "INSERT",
+          stmtKey: "USER_INS",
+          query: `INSERT INTO users (first_name, last_name, email) VALUES ($first_name, $last_name, $email)`,
+          pk: "",
+          props: ["first_name", "last_name", "email"],
+        },
+      ],
     },
   ],
   routes: [
@@ -102,6 +134,14 @@ export const users_model = {
       func: "resetUser",
       type: "delete",
       route: "/users/",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [],
+    },
+    {
+      func: "insertDefaultUsers",
+      type: "put",
+      route: "/unicorns/",
       exclude_body: [],
       exclude_params: [],
       middlewares: [resetUsers],

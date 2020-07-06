@@ -4,7 +4,6 @@ export const resetUnicorns = (req, res, next) => {
     { name: "Two", age: "2", color: "White" },
     { name: "Three", age: "3", color: "Zebra" },
   ];
-
   req.body = props;
   next();
 };
