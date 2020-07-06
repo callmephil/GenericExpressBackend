@@ -4,9 +4,10 @@ import { models } from "../../Models/index";
 const getQueriesFromModels = (models = []) => {
   return models.map(({ transactions }) => {
     const _obj = {};
-    transactions.forEach(({ query }) => {
-      const [key, value] = Object.entries(query)[0];
-      _obj[key] = value;
+    transactions.forEach(({ statements }) => {
+      statements.forEach(({ stmtKey, query }) => {
+        _obj[stmtKey] = query;
+      });
     });
     return _obj;
   });
@@ -31,24 +32,34 @@ const prepareStmt = (db) => {
   }
 };
 
-
 const executeTransactions = (db) => {
   return db.transaction((stmt, type, props) => {
     const promises = [];
     for (const prop of props) {
+      console.log('call', type, stmt, prop);
       promises.push(executeToDatabase(stmt)[type](prop));
     }
     return Promise.all(promises);
-  })
-}
+  });
+};
 
+// TODO 
 const executeMultipleStatement = (db) => {
-  return db.transaction((stmt, props) => {
-    const type = "";
+  return db.transaction((statements, props) => {
     const promises = [];
-    if (Array.isArray(stmt)) {
-      for (const statement of stmt) {
-        promises.push(executeToDatabase(statement)[type](props))
+    for (const { stmtKey, type, props: expectedProps } of statements) {
+      // IMPORTANT Order 
+      // DELETE FIRST
+      // UPDATE SECOND
+      // CREATE THIRD
+      console.log(stmtKey);
+
+      if (expectedProps.length === 0) {
+        promises.push(executeToDatabase(stmtKey)[type]());
+      } else if (expectedProps.length > 1 && (Array.isArray(props) && props.length > 1)) {
+        for (const prop of props) {
+          promises.push(executeToDatabase(stmtKey)[type](prop));
+        }
       }
     }
     return Promise.all(promises);
@@ -173,4 +184,4 @@ const executeToDatabase = (stmt) => {
   }
 };
 
-export { prepareStmt, executeToDatabase, executeTransaction };
+export { prepareStmt, executeToDatabase, executeTransactions, executeMultipleStatement };

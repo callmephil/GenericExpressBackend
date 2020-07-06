@@ -5,106 +5,146 @@ export const unicorns_model = {
   transactions: [
     {
       func: "getUnicorn",
-      type: "SELECT",
-      query: {
-        UNICORN_SEL_ID: `SELECT * FROM unicorns WHERE unicorn_id = ?`,
-      },
-      pk: "unicorn_id",
-      props: [],
+      statements: [
+        {
+          type: "SELECT",
+          stmtKey: "UNICORN_SEL_ID",
+          query: `SELECT * FROM unicorns WHERE unicorn_id = ?`,
+          pk: "unicorn_id",
+          props: [],
+        },
+      ],
     },
     {
       func: "getAllUnicorns",
-      type: "SELECT_ALL",
-      query: {
-        UNICORN_SEL_ALL: `SELECT * FROM unicorns`,
-      },
-      pk: "",
-      props: [],
+      statements: [
+        {
+          type: "SELECT_ALL",
+          stmtKey: "UNICORN_SEL_ALL",
+          query: `SELECT * FROM unicorns`,
+          pk: "",
+          props: [],
+        },
+      ],
     },
     {
       func: "createUnicorn",
-      type: "INSERT",
-      query: {
-        UNICORN_INS: `INSERT INTO unicorns (name, age, color) VALUES ($name, $age, $color)`,
-      },
-      pk: "",
-      props: ["name", "age", "color"],
+      statements: [
+        {
+          type: "INSERT",
+          stmtKey: "UNICORN_INS",
+          query: `INSERT INTO unicorns (name, age, color) VALUES ($name, $age, $color)`,
+          pk: "",
+          props: ["name", "age", "color"],
+        },
+      ],
     },
     {
       func: "updateUnicorn",
-      type: "UPDATE",
-      query: {
-        UNICORN_UPD: `UPDATE unicorns SET name = $name, age = $age, color = $color WHERE unicorn_id = @id`,
-      },
-      pk: "unicorn_id",
-      props: ["name", "age", "color"],
+      statements: [
+        {
+          type: "UPDATE",
+          stmtKey: "UNICORN_UPD",
+          query: `UPDATE unicorns SET name = $name, age = $age, color = $color WHERE unicorn_id = @id`,
+          pk: "unicorn_id",
+          props: ["name", "age", "color"],
+        },
+      ],
     },
     {
       func: "deleteUnicorn",
-      type: "DELETE",
-      query: {
-        UNICORN_DEL: `DELETE FROM unicorns WHERE unicorn_id = ?`,
-      },
-      pk: "unicorn_id",
-      props: [],
+      statements: [
+        {
+          type: "DELETE",
+          stmtKey: "UNICORN_DEL",
+          query: `DELETE FROM unicorns WHERE unicorn_id = ?`,
+          pk: "unicorn_id",
+          props: [],
+        },
+      ],
     },
     {
       func: "resetUnicorns",
-      type: "DELETE",
-      query: {
-        UNICORN_DEL_ALL: `DELETE FROM unicorns`
-      },
-      pk: "",
-      props: [],
+      statements: [
+        {
+          type: "DELETE_ALL",
+          stmtKey: "UNICORN_DEL_ALL",
+          query: `DELETE FROM unicorns`,
+          pk: "",
+          props: [],
+        },
+      ],
+    },
+    {
+      // TODO: Duplicate
+      func: "insertDefaultUnicorns",
+      statements: [
+        {
+          type: "INSERT",
+          stmtKey: "UNICORN_INS_ALL",
+          query: `INSERT INTO unicorns (name, age, color) VALUES ($name, $age, $color)`,
+          pk: "",
+          props: ["name", "age", "color"],
+        },
+      ],
     },
   ],
   routes: [
-  {
-    func: "getUnicorn",
-    type: "get",
-    route: "/unicorns/:unicorn_id",
-    exclude_body: [],
-    exclude_params: [],
-    middlewares: [change_1, change_2],
-  },
-  {
-    func: "getAllUnicorns",
-    type: "get",
-    route: "/unicorns/",
-    exclude_body: [],
-    exclude_params: [],
-    middlewares: [],
-  },
-  {
-    func: "createUnicorn",
-    type: "post",
-    route: "/unicorns/",
-    exclude_body: [],
-    exclude_params: [],
-    middlewares: [],
-  },
-  {
-    func: "updateUnicorn",
-    type: "patch",
-    route: "/unicorns/:unicorn_id",
-    exclude_body: [],
-    exclude_params: [],
-    middlewares: [],
-  },
-  {
-    func: "deleteUnicorn",
-    type: "delete",
-    route: "/unicorns/:unicorn_id",
-    exclude_body: [],
-    exclude_params: [],
-    middlewares: [],
-  },
-  {
-    func: "resetUnicorns",
-    type: "delete",
-    route: "/unicorns/",
-    exclude_body: [],
-    exclude_params: [],
-    middlewares: [resetUnicorns],
-  },
-]};
+    {
+      func: "getUnicorn",
+      type: "get",
+      route: "/unicorns/:unicorn_id",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [change_1, change_2],
+    },
+    {
+      func: "getAllUnicorns",
+      type: "get",
+      route: "/unicorns/",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [],
+    },
+    {
+      func: "createUnicorn",
+      type: "post",
+      route: "/unicorns/",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [],
+    },
+    {
+      func: "updateUnicorn",
+      type: "patch",
+      route: "/unicorns/:unicorn_id",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [],
+    },
+    {
+      func: "deleteUnicorn",
+      type: "delete",
+      route: "/unicorns/:unicorn_id",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [],
+    },
+    {
+      func: "resetUnicorns",
+      type: "delete",
+      route: "/unicorns/",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [],
+    },
+    {
+      func: "insertDefaultUnicorns",
+      type: "put",
+      route: "/unicorns/",
+      exclude_body: [],
+      exclude_params: [],
+      middlewares: [resetUnicorns],
+    },
+  ],
+};

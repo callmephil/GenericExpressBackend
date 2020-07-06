@@ -1,4 +1,8 @@
-import { executeToDatabase, executeTransaction } from "./PreparedStatement";
+import {
+  executeToDatabase,
+  executeTransactions,
+  executeMultipleStatement,
+} from "./PreparedStatement";
 import { models } from "../../Models";
 
 const initializeController = async (stmtTable, connection) => {
@@ -6,33 +10,44 @@ const initializeController = async (stmtTable, connection) => {
     const prepareFunctions = () => {
       const controller = {};
       models.forEach(({ transactions }) => {
-        transactions.forEach(({ func, type, query, pk, props }) => {
-          const stmtKey = Object.keys(query)[0];
-          const stmt = stmtTable[stmtKey];
-          controller[func] = (_props) => {
-            const { [pk]: id, ...params } = _props;
+        transactions.forEach(({ func, statements }) => {
+          if (statements.length === 1) {
+            const { type, stmtKey, pk, props: expectedProps } = statements[0];
+            const stmt = stmtTable[stmtKey];
 
-            // // note pk should not be array
-            // clean this shiet
-            // find a way to run multiple queries
+            // Init Function
+            controller[func] = (props) => {
+              const { [pk]: id, ...params } = props;
+              const hasPk = pk !== "";
+              const hasProps = expectedProps.length > 0;
+              const isBulk = Array.isArray(props) && props.length > 1;
 
-            if (pk.length > 0 && props.length < 1) {
-              return executeToDatabase(stmt)[type](id);
-            } else if (pk.length > 0 && props.length > 0) {
-              return executeToDatabase(stmt)[type](id, params);
-            } else if (pk === "" && props.length > 0) {
-              return executeToDatabase(stmt)[type](_props);
-            } else if (Array.isArray(params)) {
-
-            } else {
-              return executeToDatabase(stmt)[type]();
-            }
-          };
+              // TODO: SIMPLIFY
+              if (isBulk) {
+                const multi = executeTransactions(connection);
+                return multi(stmt, type, props);
+              } else if (hasPk && !hasProps) {
+                return executeToDatabase(stmt)[type](id);
+              } else if (hasPk && hasProps) {
+                return executeToDatabase(stmt)[type](id, params);
+              } else if (!hasPk && hasProps) {
+                return executeToDatabase(stmt)[type](props);
+              } else {
+                return executeToDatabase(stmt)[type]();
+              }
+            };
+          } else if (statements.length > 1) {
+            // TODO: NOT WORKING
+            controller[func] = (props) => {
+              return executeMultipleStatement(connection)(statements, props);
+            };
+          }
         });
       });
+
       return controller;
     };
-    
+
     return prepareFunctions();
   } catch (e) {
     console.log(`initializeUnicorns ${e}`);
