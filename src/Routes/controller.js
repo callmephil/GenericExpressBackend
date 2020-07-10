@@ -1,6 +1,7 @@
 import { io } from "../app";
 import Express from "express";
 import { _objectWithoutProperties } from "../utils/_es7.fn";
+import { Logger } from "../utils/logger";
 const app = Express();
 
 const controllerCall = (controller) => {
@@ -9,7 +10,9 @@ const controllerCall = (controller) => {
       const result = await controller[method](props);
       if (result === null) res.status(500);
 
-      if (result) handleSocketEmitter(res, result);
+      if (result) {
+        handleSocketEmitter(res, result);
+      }
 
       res.json({
         result,
@@ -34,21 +37,26 @@ const handleSocketEmitter = (response, result) => {
 };
 
 export default async (controller, models = []) => {
-  const transactionCall = controllerCall(controller);
+  try {
+    const transactionCall = controllerCall(controller);
 
-  for await (const model of models) {
-    const { func, type, route, exclude_body, exclude_params, middlewares } = model;
-    app[type](route, [...middlewares], async (req, res, next) => {
-      // TODO: REVIEW - Hack Fix  BULK INSERT ?
-      if (Array.isArray(req.body)) {
-        transactionCall(func, req.body, res, next);
-      } else {
-        const body = _objectWithoutProperties(req.body, exclude_body);
-        const params = _objectWithoutProperties(req.params, exclude_params);
-        transactionCall(func, { ...params, ...body }, res, next);
+    for await (const model of models) {
+      try {
+        const { func, type, route, middlewares } = model;
+        app[type](route, [...middlewares], async ({ params, body }, res, next) => {
+          const data = Array.isArray(body) ? body : { ...params, ...body };
+
+          transactionCall(func, data, res, next);
+        });
+      } catch (e) {
+        const logger = Logger("controller", "For Loop");
+        logger.logError(e.message, model);
       }
-    });
-  }
+    }
 
-  return app;
+    return app;
+  } catch (e) {
+    const logger = Logger("controller", "Default Catch");
+    logger.logError(e.message);
+  }
 };

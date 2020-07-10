@@ -28,7 +28,6 @@ This project intend to build a generic backend ready to use for small apps and m
 - [ ] Communication Module/Interceptors 
 - [ ] Strict Mode filtering (Only allow certain params/body to be passed)
 - [ ] e2e Tests & Dynamic tests? 
-- [ ] Migrate to Sequelize
 - [ ] Migrate to Websocket 
 - [ ] Implement Caching
 - [ ] Implement Broker?
