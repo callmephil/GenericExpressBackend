@@ -1,5 +1,6 @@
 import { change_1, change_2 } from "../Middlewares/example";
 import { resetUnicorns } from "../Middlewares/reset.middlewares";
+import { ENUM_REST_API_TYPES, ENUM_QUERY_TYPES } from "../utils/enums";
 
 export const unicorns_model = {
   transactions: [
@@ -7,11 +8,11 @@ export const unicorns_model = {
       func: "getUnicorn",
       statements: [
         {
-          type: "SELECT",
+          type: ENUM_QUERY_TYPES.SELECT,
           stmtKey: "UNICORN_SEL_ID",
           query: `SELECT * FROM unicorns WHERE unicorn_id = ?`,
           pk: "unicorn_id",
-          props: [],
+          expectedProps: [],
         },
       ],
     },
@@ -19,11 +20,11 @@ export const unicorns_model = {
       func: "getAllUnicorns",
       statements: [
         {
-          type: "SELECT_ALL",
+          type: ENUM_QUERY_TYPES.SELECT_ALL,
           stmtKey: "UNICORN_SEL_ALL",
           query: `SELECT * FROM unicorns`,
           pk: "",
-          props: [],
+          expectedProps: [],
         },
       ],
     },
@@ -31,11 +32,11 @@ export const unicorns_model = {
       func: "createUnicorn",
       statements: [
         {
-          type: "INSERT",
+          type: ENUM_QUERY_TYPES.INSERT,
           stmtKey: "UNICORN_INS",
           query: `INSERT INTO unicorns (name, age, color) VALUES ($name, $age, $color)`,
           pk: "",
-          props: ["name", "age", "color"],
+          expectedProps: ["name", "age", "color"],
         },
       ],
     },
@@ -43,11 +44,11 @@ export const unicorns_model = {
       func: "updateUnicorn",
       statements: [
         {
-          type: "UPDATE",
+          type: ENUM_QUERY_TYPES.UPDATE,
           stmtKey: "UNICORN_UPD",
           query: `UPDATE unicorns SET name = $name, age = $age, color = $color WHERE unicorn_id = @id`,
           pk: "unicorn_id",
-          props: ["name", "age", "color"],
+          expectedProps: ["name", "age", "color"],
         },
       ],
     },
@@ -55,11 +56,11 @@ export const unicorns_model = {
       func: "deleteUnicorn",
       statements: [
         {
-          type: "DELETE",
+          type: ENUM_QUERY_TYPES.DELETE,
           stmtKey: "UNICORN_DEL",
           query: `DELETE FROM unicorns WHERE unicorn_id = ?`,
           pk: "unicorn_id",
-          props: [],
+          expectedProps: [],
         },
       ],
     },
@@ -67,24 +68,18 @@ export const unicorns_model = {
       func: "resetUnicorns",
       statements: [
         {
-          type: "DELETE_ALL",
+          type: ENUM_QUERY_TYPES.DELETE_ALL,
           stmtKey: "UNICORN_DEL_ALL",
           query: `DELETE FROM unicorns`,
           pk: "",
-          props: [],
+          expectedProps: [],
         },
-      ],
-    },
-    {
-      // TODO: Duplicate
-      func: "insertDefaultUnicorns",
-      statements: [
         {
-          type: "INSERT",
-          stmtKey: "UNICORN_INS_ALL",
+          type: ENUM_QUERY_TYPES.INSERT,
+          stmtKey: "UNICORN_INS_MANY",
           query: `INSERT INTO unicorns (name, age, color) VALUES ($name, $age, $color)`,
           pk: "",
-          props: ["name", "age", "color"],
+          expectedProps: ["name", "age", "color"],
         },
       ],
     },
@@ -92,58 +87,38 @@ export const unicorns_model = {
   routes: [
     {
       func: "getUnicorn",
-      type: "get",
+      type: ENUM_REST_API_TYPES.GET,
       route: "/unicorns/:unicorn_id",
-      exclude_body: [],
-      exclude_params: [],
       middlewares: [change_1, change_2],
     },
     {
       func: "getAllUnicorns",
-      type: "get",
+      type: ENUM_REST_API_TYPES.GET,
       route: "/unicorns/",
-      exclude_body: [],
-      exclude_params: [],
       middlewares: [],
     },
     {
       func: "createUnicorn",
-      type: "post",
+      type: ENUM_REST_API_TYPES.POST,
       route: "/unicorns/",
-      exclude_body: [],
-      exclude_params: [],
       middlewares: [],
     },
     {
       func: "updateUnicorn",
-      type: "patch",
+      type: ENUM_REST_API_TYPES.PATCH,
       route: "/unicorns/:unicorn_id",
-      exclude_body: [],
-      exclude_params: [],
       middlewares: [],
     },
     {
       func: "deleteUnicorn",
-      type: "delete",
+      type: ENUM_REST_API_TYPES.DELETE,
       route: "/unicorns/:unicorn_id",
-      exclude_body: [],
-      exclude_params: [],
       middlewares: [],
     },
     {
       func: "resetUnicorns",
-      type: "delete",
+      type: ENUM_REST_API_TYPES.PUT,
       route: "/unicorns/",
-      exclude_body: [],
-      exclude_params: [],
-      middlewares: [],
-    },
-    {
-      func: "insertDefaultUnicorns",
-      type: "put",
-      route: "/unicorns/",
-      exclude_body: [],
-      exclude_params: [],
       middlewares: [resetUnicorns],
     },
   ],

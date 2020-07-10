@@ -1,5 +1,6 @@
 import { io } from "../../app";
 import { models } from "../../Models/index";
+import { ENUM_QUERY_TYPES } from "../../utils/enums";
 
 const getQueriesFromModels = (models = []) => {
   return models.map(({ transactions }) => {
@@ -33,36 +34,58 @@ const prepareStmt = (db) => {
 };
 
 const executeTransactions = (db) => {
-  return db.transaction((stmt, type, props) => {
-    const promises = [];
-    for (const prop of props) {
-      console.log('call', type, stmt, prop);
-      promises.push(executeToDatabase(stmt)[type](prop));
+  return db.transaction((stmt, type, pk, props) => {
+    try {
+      const promises = [];
+      for (const { [pk]: id, ...prop } of props) {
+        if (type === ENUM_QUERY_TYPES.DELETE) {
+          promises.push(stmt.run(id));
+        } else {
+          // INSERT OR UPDATE
+          promises.push(stmt.run({ id, ...prop }));
+        }
+      }
+      return Promise.all(promises);
+    } catch (e) {
+      return {
+        success: false,
+        message: e.message,
+      };
     }
-    return Promise.all(promises);
   });
 };
 
-// TODO 
-const executeMultipleStatement = (db) => {
+// TODO: Execute Multiple Statement based on pk/props or type
+const executeMultipleStatement = (db, stmtTable) => {
   return db.transaction((statements, props) => {
-    const promises = [];
-    for (const { stmtKey, type, props: expectedProps } of statements) {
-      // IMPORTANT Order 
-      // DELETE FIRST
-      // UPDATE SECOND
-      // CREATE THIRD
-      console.log(stmtKey);
+    try {
+      const promises = [];
 
-      if (expectedProps.length === 0) {
-        promises.push(executeToDatabase(stmtKey)[type]());
-      } else if (expectedProps.length > 1 && (Array.isArray(props) && props.length > 1)) {
-        for (const prop of props) {
-          promises.push(executeToDatabase(stmtKey)[type](prop));
+      statements.forEach(({ type, pk, expectedProps, stmtKey }) => {
+        const stmt = stmtTable[stmtKey];
+
+        if (expectedProps.length === 0) {
+        } else {
+          if (props.length !== 0) {
+            for (const { [pk]: id, ...prop } of props) {
+              if (type === "DELETE") {
+                promises.push(stmt.run(id));
+              } else {
+                // INSERT OR UPDATE
+                promises.push(stmt.run({ id, ...prop }));
+              }
+            }
+          }
         }
-      }
+      });
+
+      return Promise.all(promises);
+    } catch (e) {
+      return {
+        success: false,
+        message: e.message,
+      };
     }
-    return Promise.all(promises);
   });
 };
 
@@ -138,15 +161,6 @@ const executeToDatabase = (stmt) => {
       }
     };
 
-    const DELETE_PROPS = (props) => {
-      try {
-        const result = stmt.run({ ...props });
-        return result.changes === 1 ? { ...props } : null;
-      } catch (e) {
-        return handleCatch(e);
-      }
-    };
-
     const DELETE_ALL = () => {
       try {
         return stmt.run();
@@ -155,12 +169,10 @@ const executeToDatabase = (stmt) => {
       }
     };
 
-    const INSERT_ALL = (props) => {
+    const DELETE_PROPS = (props) => {
       try {
-        const result = stmt.run({
-          ...props,
-        });
-        return result;
+        const result = stmt.run({ ...props });
+        return result.changes === 1 ? { ...props } : null;
       } catch (e) {
         return handleCatch(e);
       }
@@ -173,9 +185,8 @@ const executeToDatabase = (stmt) => {
       INSERT,
       UPDATE,
       DELETE,
-      DELETE_PROPS,
       DELETE_ALL,
-      INSERT_ALL,
+      DELETE_PROPS,
     };
 
     return QueryCenter;

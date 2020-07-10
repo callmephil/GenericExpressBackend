@@ -12,7 +12,7 @@ const initializeController = async (stmtTable, connection) => {
       models.forEach(({ transactions }) => {
         transactions.forEach(({ func, statements }) => {
           if (statements.length === 1) {
-            const { type, stmtKey, pk, props: expectedProps } = statements[0];
+            const { type, stmtKey, pk, expectedProps } = statements[0];
             const stmt = stmtTable[stmtKey];
 
             // Init Function
@@ -25,7 +25,7 @@ const initializeController = async (stmtTable, connection) => {
               // TODO: SIMPLIFY
               if (isBulk) {
                 const multi = executeTransactions(connection);
-                return multi(stmt, type, props);
+                return multi(stmt, type, pk, props);
               } else if (hasPk && !hasProps) {
                 return executeToDatabase(stmt)[type](id);
               } else if (hasPk && hasProps) {
@@ -37,9 +37,9 @@ const initializeController = async (stmtTable, connection) => {
               }
             };
           } else if (statements.length > 1) {
-            // TODO: NOT WORKING
             controller[func] = (props) => {
-              return executeMultipleStatement(connection)(statements, props);
+              const multi = executeMultipleStatement(connection, stmtTable);
+              return multi(statements, props);
             };
           }
         });
