@@ -46,33 +46,3 @@ export const deleteUsers = (req, res, next) => {
   req.body = props;
   next();
 }
-
-// const resetUnicorns = () => {
-
-//   const promise = Promise.all([
-//     executeToDatabase(UNICORN_DEL_ALL).DELETE_ALL(),
-//     executeToDatabase(UNICORN_INS).INSERT_ALL(props[0]),
-//     executeToDatabase(UNICORN_INS).INSERT_ALL(props[1]),
-//     executeToDatabase(UNICORN_INS).INSERT_ALL(props[2]),
-//   ]);
-//   return promise;
-// };
-
-// const resetUser = () => {
-
-
-//   const promise = Promise.all([
-//     executeToDatabase(USER_DEL_ALL).DELETE_ALL(),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[0]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[1]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[2]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[3]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[4]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[5]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[6]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[7]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[8]),
-//     executeToDatabase(USER_INS).INSERT_ALL(props[9]),
-//   ]);
-//   return promise;
-// };
