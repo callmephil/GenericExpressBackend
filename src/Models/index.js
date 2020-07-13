@@ -1,5 +1,5 @@
-const { unicorns_model } = require("./unicorns.model");
-const { users_model } = require("./users.model");
+import { users_model } from "./users.model";
+import { unicorns_model } from "./unicorns.model";
 
 export const models = [
     users_model,
