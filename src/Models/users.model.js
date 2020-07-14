@@ -64,16 +64,6 @@ export const users_model = {
         expectedProps: [],
       },
     },
-    {
-      func: "updateMany",
-      statement: {
-        type: ENUM_QUERY_TYPES.UPDATE,
-        stmtKey: "USER_UPD_MANY",
-        query: `UPDATE users SET first_name = $first_name, last_name = $last_name, email = $email WHERE user_id = @id`,
-        pk: "user_id",
-        expectedProps: ["first_name", "last_name", "email"],
-      },
-    },
   ],
   routes: [
     {
@@ -95,7 +85,7 @@ export const users_model = {
       middlewares: [],
     },
     {
-      func: "updateMany",
+      func: "updateUser",
       type: ENUM_REST_API_TYPES.PATCH,
       route: "/users/",
       middlewares: [updateUsers],
@@ -125,7 +115,7 @@ export const users_model = {
       middlewares: [],
     },
     {
-      func: "insertDefaultUsers",
+      func: "createUser",
       type: ENUM_REST_API_TYPES.PUT,
       route: "/users/",
       middlewares: [resetUsers],
