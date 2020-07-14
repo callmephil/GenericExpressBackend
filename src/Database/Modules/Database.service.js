@@ -4,12 +4,6 @@ import { models } from "../../Models";
 const initializeController = async (stmtTable, connection) => {
   try {
     const prepareFunctions = () => {
-      // TODO : VALIDATE PROPS BEFORE SENDING TO DB
-      const validateProps = ({ props, pk, expectedProps }) => {
-        const _props = { pk, ...expectedProps };
-        const isEqual = JSON.stringify(props) === JSON.stringify(_props);
-        return isEqual;
-      };
 
       const handleTransaction = ({ stmt, type, props, pk, expectedProps }) => {
         const { [pk]: id, ...params } = props;
@@ -17,9 +11,6 @@ const initializeController = async (stmtTable, connection) => {
         const hasProps = expectedProps.length > 0;
         const isBulk = Array.isArray(props) && props.length > 1;
 
-        // TODO:
-        // Validate Props
-        // Cleanup
         if (isBulk) {
           const bulkExecute = executeTransactions(connection);
           return bulkExecute(stmt, type, pk, props);

@@ -1,4 +1,3 @@
-import { change_1, change_2 } from "../Middlewares/example";
 import { resetUnicorns } from "../Middlewares/reset.middlewares";
 import { ENUM_REST_API_TYPES, ENUM_QUERY_TYPES } from "../utils/enums";
 
@@ -70,7 +69,7 @@ export const unicorns_model = {
       func: "getUnicorn",
       type: ENUM_REST_API_TYPES.GET,
       route: "/unicorns/:unicorn_id",
-      middlewares: [change_1, change_2],
+      middlewares: [],
     },
     {
       func: "getAllUnicorns",
@@ -98,6 +97,12 @@ export const unicorns_model = {
     },
     {
       func: "resetUnicorns",
+      type: ENUM_REST_API_TYPES.DELETE,
+      route: "/unicorns/",
+      middlewares: [],
+    },
+    {
+      func: "createUnicorn",
       type: ENUM_REST_API_TYPES.PUT,
       route: "/unicorns/",
       middlewares: [resetUnicorns],
