@@ -26,28 +26,28 @@
   },
   "keywords": [],
   "author": "Callmephil",
-  "license": "GPL 3.0",
+  "license": "UNLICENSED",
   "dependencies": {
-    "@babel/cli": "^7.10.4",
-    "@babel/core": "^7.10.4",
-    "@babel/node": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
-    "@babel/register": "^7.10.4",
-    "better-sqlite3": "^7.1.0",
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@babel/node": "^7.14.2",
+    "@babel/preset-env": "^7.14.4",
+    "@babel/register": "^7.13.16",
+    "better-sqlite3": "^7.4.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "dot-env": "0.0.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "express-session": "^1.17.0",
-    "helmet": "^3.23.3",
+    "express-session": "^1.17.2",
+    "helmet": "^4.6.0",
     "morgan": "^1.9.1",
     "regenerator-runtime": "^0.13.3",
     "rimraf": "^3.0.0",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^2.3.0"
+    "socket.io": "^4.1.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.7"
   }
 }
