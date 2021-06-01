@@ -3,12 +3,10 @@ import cookieParser from "cookie-parser"; // parses cookies
 import session from "express-session"; // parses sessions
 import favicon from "serve-favicon"; // serves favicon
 import cors from "cors"; // allows cross-domain requests
-import bodyParser from "body-parser"; // middleware to handle HTTP requests
 import morgan from "morgan";
 import path from "path";
 import helmet from "helmet";
 import "regenerator-runtime/runtime";
-import socketIO from "socket.io";
 require("dotenv").config();
 
 const app = express(); // create a new app
@@ -34,8 +32,6 @@ app.use(express.urlencoded({ extended: false })); // allows POST requests with G
 app.use(cookieParser()); // Parses cookies
 app.use(favicon(path.join(__dirname, "../public", "favicon.ico"))); // <-- location of your favicon
 app.use(express.static(path.join(__dirname, "../public"))); // <-- location of your public dir
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(morgan("dev"));
 
 // Sessions
@@ -48,17 +44,8 @@ app.use(
 );
 
 const BACK_PORT = process.env.NODE_PORT || 8080;
-const server = app.listen(BACK_PORT, () =>
+app.listen(BACK_PORT, () =>
   console.log(`server listening on port ${BACK_PORT}`)
 );
-const io = socketIO.listen(server);
-io.attach(server, {
-  pingInterval: 10000,
-  pingTimeout: 5000,
-});
-app.use((req, res, next) => {
-  res["io"] = io;
-  next();
-});
 
-export { app, io };
+export { app };
