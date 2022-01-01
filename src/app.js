@@ -8,7 +8,7 @@ import morgan from "morgan";
 import path from "path";
 import helmet from "helmet";
 import "regenerator-runtime/runtime";
-import socketIO from "socket.io";
+import { Server } from "socket.io";
 require("dotenv").config();
 
 const app = express(); // create a new app
@@ -51,7 +51,8 @@ const BACK_PORT = process.env.NODE_PORT || 8080;
 const server = app.listen(BACK_PORT, () =>
   console.log(`server listening on port ${BACK_PORT}`)
 );
-const io = socketIO.listen(server);
+const io = new Server(server);
+
 io.attach(server, {
   pingInterval: 10000,
   pingTimeout: 5000,
