@@ -28,26 +28,26 @@
   "author": "Callmephil",
   "license": "UNLICENSED",
   "dependencies": {
-    "@babel/cli": "^7.14.3",
-    "@babel/core": "^7.14.3",
-    "@babel/node": "^7.14.2",
-    "@babel/preset-env": "^7.14.4",
-    "@babel/register": "^7.13.16",
-    "better-sqlite3": "^7.4.0",
-    "cookie-parser": "^1.4.4",
+    "@babel/cli": "^7.24.1",
+    "@babel/core": "^7.24.4",
+    "@babel/node": "^7.23.9",
+    "@babel/preset-env": "^7.24.4",
+    "@babel/register": "^7.23.7",
+    "better-sqlite3": "^9.5.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dot-env": "0.0.1",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.2",
-    "helmet": "^4.6.0",
-    "morgan": "^1.9.1",
-    "regenerator-runtime": "^0.13.3",
-    "rimraf": "^3.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "regenerator-runtime": "^0.14.1",
+    "rimraf": "^5.0.5",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^4.1.2"
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^3.1.0"
   }
 }
