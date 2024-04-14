@@ -4,7 +4,6 @@ import { models } from "../../Models";
 const initializeController = async (stmtTable, connection) => {
   try {
     const prepareFunctions = () => {
-
       const handleTransaction = ({ stmt, type, props, pk, expectedProps }) => {
         const { [pk]: id, ...params } = props;
         const hasPk = pk !== "";
@@ -15,13 +14,13 @@ const initializeController = async (stmtTable, connection) => {
           const bulkExecute = executeTransactions(connection);
           return bulkExecute(stmt, type, pk, props);
         } else if (hasPk && !hasProps) {
-          return executeToDatabase(stmt)[type](id);
+          return (executeToDatabase(stmt) ?? {})[type](id);
         } else if (hasPk && hasProps) {
-          return executeToDatabase(stmt)[type](id, params);
+          return (executeToDatabase(stmt) ?? {})[type](id, params);
         } else if (!hasPk && hasProps) {
-          return executeToDatabase(stmt)[type](props);
+          return (executeToDatabase(stmt) ?? {})[type](props);
         } else {
-          return executeToDatabase(stmt)[type]();
+          return (executeToDatabase(stmt) ?? {})[type]();
         }
       };
 
